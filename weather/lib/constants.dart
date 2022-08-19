@@ -15,6 +15,12 @@ const cHomeBackgroundFogEnd = Color(0xFF626575);
 const cHomeBackgroundSnowStart = Color(0xFF858EB4);
 const cHomeBackgroundSnowEnd = Color(0xFF50737D);
 
+const cAboutBackgroundStart = cHomeBackgroundSunStart;
+const cAboutBackgroundEnd = cHomeBackgroundSunEnd;
+const cAboutAppBar = Color(0xFF8CB5F3);
+const cAboutLogoStart = Color(0xFF5A8EE4);
+const cAboutLogoEnd = Color(0xFFA6C0EC);
+
 final lottieSun = Lottie.asset("assets/lottie/sun.json");
 final lottieRain = Lottie.asset("assets/lottie/rain.json");
 final lottieThunderstorm = Lottie.asset("assets/lottie/thunderstorm.json");

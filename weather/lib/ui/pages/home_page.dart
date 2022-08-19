@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../src/utils.dart';
 import '../widgets/blur_circle.dart';
 import '../widgets/neomorphic_container.dart';
 import '../../constants.dart';
+import 'about_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -15,38 +15,72 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static const durationAnimationFade = Duration(milliseconds: 500);
-  static const curveAnimtionFade = Curves.easeIn;
+  static const _durationAnimationFade = Duration(milliseconds: 500);
+  static const _curveAnimtionFade = Curves.easeIn;
+  static final List<WeatherInfo> _weatherInfo = [
+    WeatherInfo(
+      name: "Ветер",
+      icon: const FaIcon(FontAwesomeIcons.wind, color: Colors.white, size: 22),
+      data: "1.3 м/с, СВ",
+    ),
+    WeatherInfo(
+      name: "Влажность",
+      icon:
+          const FaIcon(FontAwesomeIcons.droplet, color: Colors.white, size: 22),
+      data: "45%",
+    ),
+    WeatherInfo(
+      name: "Давление",
+      icon: const FaIcon(FontAwesomeIcons.gaugeHigh,
+          color: Colors.white, size: 22),
+      data: "567 мм рт. ст.",
+    ),
+  ];
 
-  WeatherState weatherState = WeatherState.sun;
-  Color cBackgroundStart = cHomeBackgroundSunStart;
-  Color cBackgroundEnd = cHomeBackgroundSunEnd;
+  WeatherState _weatherState = WeatherState.sun;
+  Color _cBackgroundStart = cHomeBackgroundSunStart;
+  Color _cBackgroundEnd = cHomeBackgroundSunEnd;
 
   void changeWeatherState() {
-    weatherState = WeatherState
-        .values[(weatherState.index + 1) % WeatherState.values.length];
+    _weatherState = WeatherState
+        .values[(_weatherState.index + 1) % WeatherState.values.length];
 
-    switch (weatherState) {
+    switch (_weatherState) {
       case WeatherState.sun:
-        cBackgroundStart = cHomeBackgroundSunStart;
-        cBackgroundEnd = cHomeBackgroundSunEnd;
+        _cBackgroundStart = cHomeBackgroundSunStart;
+        _cBackgroundEnd = cHomeBackgroundSunEnd;
         break;
       case WeatherState.rain:
-        cBackgroundStart = cHomeBackgroundRainStart;
-        cBackgroundEnd = cHomeBackgroundRainEnd;
+        _cBackgroundStart = cHomeBackgroundRainStart;
+        _cBackgroundEnd = cHomeBackgroundRainEnd;
         break;
       case WeatherState.thunderstorm:
-        cBackgroundStart = cHomeBackgroundThunderstormStart;
-        cBackgroundEnd = cHomeBackgroundThunderstormEnd;
+        _cBackgroundStart = cHomeBackgroundThunderstormStart;
+        _cBackgroundEnd = cHomeBackgroundThunderstormEnd;
         break;
       case WeatherState.fog:
-        cBackgroundStart = cHomeBackgroundFogStart;
-        cBackgroundEnd = cHomeBackgroundFogEnd;
+        _cBackgroundStart = cHomeBackgroundFogStart;
+        _cBackgroundEnd = cHomeBackgroundFogEnd;
         break;
       case WeatherState.snow:
-        cBackgroundStart = cHomeBackgroundSnowStart;
-        cBackgroundEnd = cHomeBackgroundSnowEnd;
+        _cBackgroundStart = cHomeBackgroundSnowStart;
+        _cBackgroundEnd = cHomeBackgroundSnowEnd;
         break;
+    }
+  }
+
+  void onMenuSelected(String value) {
+    if (value == "О нас") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AboutPage(),
+        ),
+      );
+    } else {
+      setState(() {
+        changeWeatherState();
+      });
     }
   }
 
@@ -69,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                   child: GestureDetector(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
-                      children: const <Widget>[
+                      children: const [
                         Padding(
                           padding: EdgeInsets.only(bottom: 1),
                           child: Text("Стерлитамак"),
@@ -82,13 +116,18 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      IconButton(
+                    children: [
+                      PopupMenuButton<String>(
                         icon: const Icon(Icons.more_vert),
                         tooltip: "Меню информации",
-                        onPressed: () => setState(() {
-                          changeWeatherState();
-                        }),
+                        itemBuilder: (context) => ["О нас", "Сменить погоду"]
+                            .map<PopupMenuItem<String>>(
+                                (item) => PopupMenuItem<String>(
+                                      value: item,
+                                      child: Text(item),
+                                    ))
+                            .toList(),
+                        onSelected: onMenuSelected,
                       ),
                     ],
                   ),
@@ -102,16 +141,16 @@ class _HomePageState extends State<HomePage> {
                   left: 40, right: 40, top: 40, bottom: 4),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
+                children: [
                   Column(
-                    children: <Widget>[
+                    children: [
                       _buildWeatherIconUI(context),
                       const SizedBox(height: 20),
                       _buildTemperatureInfoUI(context),
                     ],
                   ),
                   Column(
-                    children: <Widget>[
+                    children: [
                       _buildWeatherInfoUI(context),
                       const SizedBox(height: 30),
                       _buildFooterUI(context),
@@ -130,13 +169,13 @@ class _HomePageState extends State<HomePage> {
     return AnimatedContainer(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: <Color>[cBackgroundStart, cBackgroundEnd],
+          colors: [_cBackgroundStart, _cBackgroundEnd],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
       ),
-      duration: durationAnimationFade,
-      curve: curveAnimtionFade,
+      duration: _durationAnimationFade,
+      curve: _curveAnimtionFade,
       child: Stack(
         children: [
           const Positioned(
@@ -174,15 +213,15 @@ class _HomePageState extends State<HomePage> {
       child: AspectRatio(
         aspectRatio: 1,
         child: NeomorphicContainer(
-          color: cBackgroundStart,
+          color: _cBackgroundStart,
           borderRadius: 40,
           blur: 8,
           distance: 8,
           intensity: 0.25,
-          duration: durationAnimationFade,
-          curve: curveAnimtionFade,
+          duration: _durationAnimationFade,
+          curve: _curveAnimtionFade,
           child: Stack(
-            children: WeatherState.values.map<Widget>((state) {
+            children: WeatherState.values.map((state) {
               Widget child;
 
               switch (state) {
@@ -205,9 +244,9 @@ class _HomePageState extends State<HomePage> {
 
               return Center(
                 child: AnimatedOpacity(
-                  opacity: state == weatherState ? 1 : 0,
-                  duration: durationAnimationFade,
-                  curve: curveAnimtionFade,
+                  opacity: state == _weatherState ? 1 : 0,
+                  duration: _durationAnimationFade,
+                  curve: _curveAnimtionFade,
                   child: child,
                 ),
               );
@@ -220,10 +259,10 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildTemperatureInfoUI(BuildContext context) {
     return Column(
-      children: <Widget>[
-        Text(
+      children: [
+        const Text(
           "24°C",
-          style: GoogleFonts.roboto(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
             fontSize: 40,
@@ -231,7 +270,7 @@ class _HomePageState extends State<HomePage> {
         ),
         Text(
           "Ясно",
-          style: GoogleFonts.roboto(
+          style: TextStyle(
             color: Colors.white.withOpacity(0.75),
             fontSize: 26,
           ),
@@ -243,7 +282,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildWeatherInfoUI(BuildContext context) {
     return NeomorphicContainer(
       gradient: LinearGradient(
-        colors: <Color>[cBackgroundStart, cBackgroundEnd],
+        colors: [_cBackgroundStart, _cBackgroundEnd],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
@@ -251,23 +290,22 @@ class _HomePageState extends State<HomePage> {
       blur: 8,
       distance: 8,
       intensity: 0.25,
-      duration: durationAnimationFade,
-      curve: curveAnimtionFade,
+      duration: _durationAnimationFade,
+      curve: _curveAnimtionFade,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          children: <Widget>[
-            Column(
+          children: _weatherInfo.map((item) {
+            return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    const FaIcon(FontAwesomeIcons.wind,
-                        color: Colors.white, size: 22),
+                    item.icon,
                     const SizedBox(width: 4),
                     Text(
-                      "1.3 м/с, СВ",
-                      style: GoogleFonts.roboto(
+                      item.data,
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           fontSize: 24),
@@ -275,70 +313,20 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 Text(
-                  "Ветер",
-                  style: GoogleFonts.roboto(
+                  item.name,
+                  style: TextStyle(
                       color: Colors.white.withOpacity(0.8), fontSize: 18),
                 )
               ],
-            ),
-            const SizedBox(height: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const FaIcon(FontAwesomeIcons.droplet,
-                        color: Colors.white, size: 22),
-                    const SizedBox(width: 4),
-                    Text(
-                      "45%",
-                      style: GoogleFonts.roboto(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 24),
-                    ),
-                  ],
-                ),
-                Text(
-                  "Влажность",
-                  style: GoogleFonts.roboto(
-                      color: Colors.white.withOpacity(0.8), fontSize: 18),
-                )
-              ],
-            ),
-            const SizedBox(height: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const FaIcon(FontAwesomeIcons.gaugeHigh,
-                        color: Colors.white, size: 22),
-                    const SizedBox(width: 4),
-                    Text(
-                      "567 мм рт. ст.",
-                      style: GoogleFonts.roboto(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 24),
-                    ),
-                  ],
-                ),
-                Text(
-                  "Давление",
-                  style: GoogleFonts.roboto(
-                      color: Colors.white.withOpacity(0.8), fontSize: 18),
-                )
-              ],
-            ),
-          ],
+            );
+          }).toList(),
         ),
       ),
     );
   }
 
   Widget _buildFooterUI(BuildContext context) {
-    TextStyle textStyle = GoogleFonts.roboto(
+    TextStyle textStyle = TextStyle(
       fontSize: 12,
       color: Colors.white.withOpacity(0.6),
     );
@@ -347,7 +335,7 @@ class _HomePageState extends State<HomePage> {
       text: TextSpan(
         text: "Данные предоставлены ",
         style: textStyle,
-        children: <InlineSpan>[
+        children: [
           TextSpan(
             text: "OpenWeather",
             style:
