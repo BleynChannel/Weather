@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+const cHomeBackgroundBlurCircle1 = Color(0xFFFEF1C5);
+const cHomeBackgroundBlurCircle2 = Color(0xFFFBBAF4);
+
 const cHomeBackgroundSunStart = Color(0xFFA9CAF6);
 const cHomeBackgroundSunEnd = Color(0xFF5E92F3);
 const cHomeBackgroundRainStart = Color(0xFF223288);

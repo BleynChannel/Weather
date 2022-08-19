@@ -3,6 +3,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
+import '../widgets/blur_circle.dart';
+import '../widgets/neomorphic_container.dart';
 import '../../constants.dart';
 
 class HomePage extends StatelessWidget {
@@ -57,7 +59,8 @@ class HomePage extends StatelessWidget {
           ),
           body: Center(
             child: Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 40, bottom: 4),
+              padding: const EdgeInsets.only(
+                  left: 40, right: 40, top: 40, bottom: 4),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -84,7 +87,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildBackgroundUI(Widget? child) {
+  Widget _buildBackgroundUI(Widget child) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -93,7 +96,29 @@ class HomePage extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
       ),
-      child: child,
+      child: Stack(
+        children: [
+          const Positioned(
+            top: 16,
+            left: -120,
+            child: BlurCircle(
+              color: cHomeBackgroundBlurCircle1,
+              size: 240,
+              blurRadius: 100,
+            ),
+          ),
+          const Positioned(
+            bottom: 150,
+            right: -60,
+            child: BlurCircle(
+              color: cHomeBackgroundBlurCircle2,
+              size: 160,
+              blurRadius: 80,
+            ),
+          ),
+          child,
+        ],
+      ),
     );
   }
 
@@ -107,23 +132,12 @@ class HomePage extends StatelessWidget {
       ),
       child: AspectRatio(
         aspectRatio: 1,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(40),
-            color: cBackgroundStart,
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                offset: const Offset(8, 8),
-                blurRadius: 8,
-                color: Colors.black.withOpacity(0.25),
-              ),
-              BoxShadow(
-                offset: const Offset(-8, -8),
-                blurRadius: 8,
-                color: Colors.white.withOpacity(0.25),
-              ),
-            ],
-          ),
+        child: NeomorphicContainer(
+          color: cBackgroundStart,
+          borderRadius: 40,
+          blur: 8,
+          distance: 8,
+          intensity: 0.25,
           child: Lottie.asset("assets/lottie/sun.json"),
         ),
       ),
@@ -153,27 +167,16 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildWeatherInfoUI(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        gradient: LinearGradient(
-          colors: <Color>[cBackgroundStart, cBackgroundEnd],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            offset: const Offset(8, 8),
-            blurRadius: 8,
-            color: Colors.black.withOpacity(0.25),
-          ),
-          BoxShadow(
-            offset: const Offset(-8, -8),
-            blurRadius: 8,
-            color: Colors.white.withOpacity(0.25),
-          ),
-        ],
+    return NeomorphicContainer(
+      gradient: LinearGradient(
+        colors: <Color>[cBackgroundStart, cBackgroundEnd],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
       ),
+      borderRadius: 30,
+      blur: 8,
+      distance: 8,
+      intensity: 0.25,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
