@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 const cHomeBackgroundBlurCircle1 = Color(0xFFFEF1C5);
 const cHomeBackgroundBlurCircle2 = Color(0xFFFBBAF4);
@@ -11,5 +12,11 @@ const cHomeBackgroundThunderstormStart = Color(0xFF131624);
 const cHomeBackgroundThunderstormEnd = Color(0xFF818DAC);
 const cHomeBackgroundFogStart = Color(0xFF626575);
 const cHomeBackgroundFogEnd = Color(0xFF626575);
-const cHomeBackgroundSnowStart = Color(0xFFD8D9EE);
+const cHomeBackgroundSnowStart = Color(0xFF858EB4);
 const cHomeBackgroundSnowEnd = Color(0xFF50737D);
+
+final lottieSun = Lottie.asset("assets/lottie/sun.json");
+final lottieRain = Lottie.asset("assets/lottie/rain.json");
+final lottieThunderstorm = Lottie.asset("assets/lottie/thunderstorm.json");
+final lottieFog = Lottie.asset("assets/lottie/fog.json");
+final lottieSnow = Lottie.asset("assets/lottie/snow.json");

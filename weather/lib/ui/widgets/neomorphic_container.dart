@@ -8,6 +8,8 @@ class NeomorphicContainer extends StatelessWidget {
   final double distance;
   final double intensity;
   final double blur;
+  final Duration duration;
+  final Curve curve;
 
   const NeomorphicContainer({
     Key? key,
@@ -18,11 +20,13 @@ class NeomorphicContainer extends StatelessWidget {
     this.distance = 4,
     this.intensity = 0.25,
     this.blur = 4,
+    this.duration = const Duration(seconds: 1),
+    this.curve = Curves.easeIn,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
         color: color,
@@ -40,6 +44,8 @@ class NeomorphicContainer extends StatelessWidget {
           ),
         ],
       ),
+      duration: duration,
+      curve: curve,
       child: child,
     );
   }

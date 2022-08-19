@@ -1,17 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
 
+import '../../src/utils.dart';
 import '../widgets/blur_circle.dart';
 import '../widgets/neomorphic_container.dart';
 import '../../constants.dart';
 
-class HomePage extends StatelessWidget {
-  final cBackgroundStart = cHomeBackgroundSunStart;
-  final cBackgroundEnd = cHomeBackgroundSunEnd;
-
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  static const durationAnimationFade = Duration(milliseconds: 500);
+  static const curveAnimtionFade = Curves.easeIn;
+
+  WeatherState weatherState = WeatherState.sun;
+  Color cBackgroundStart = cHomeBackgroundSunStart;
+  Color cBackgroundEnd = cHomeBackgroundSunEnd;
+
+  void changeWeatherState() {
+    weatherState = WeatherState
+        .values[(weatherState.index + 1) % WeatherState.values.length];
+
+    switch (weatherState) {
+      case WeatherState.sun:
+        cBackgroundStart = cHomeBackgroundSunStart;
+        cBackgroundEnd = cHomeBackgroundSunEnd;
+        break;
+      case WeatherState.rain:
+        cBackgroundStart = cHomeBackgroundRainStart;
+        cBackgroundEnd = cHomeBackgroundRainEnd;
+        break;
+      case WeatherState.thunderstorm:
+        cBackgroundStart = cHomeBackgroundThunderstormStart;
+        cBackgroundEnd = cHomeBackgroundThunderstormEnd;
+        break;
+      case WeatherState.fog:
+        cBackgroundStart = cHomeBackgroundFogStart;
+        cBackgroundEnd = cHomeBackgroundFogEnd;
+        break;
+      case WeatherState.snow:
+        cBackgroundStart = cHomeBackgroundSnowStart;
+        cBackgroundEnd = cHomeBackgroundSnowEnd;
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +86,9 @@ class HomePage extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.more_vert),
                         tooltip: "Меню информации",
-                        onPressed: () {},
+                        onPressed: () => setState(() {
+                          changeWeatherState();
+                        }),
                       ),
                     ],
                   ),
@@ -88,7 +127,7 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildBackgroundUI(Widget child) {
-    return Container(
+    return AnimatedContainer(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: <Color>[cBackgroundStart, cBackgroundEnd],
@@ -96,6 +135,8 @@ class HomePage extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
       ),
+      duration: durationAnimationFade,
+      curve: curveAnimtionFade,
       child: Stack(
         children: [
           const Positioned(
@@ -104,7 +145,7 @@ class HomePage extends StatelessWidget {
             child: BlurCircle(
               color: cHomeBackgroundBlurCircle1,
               size: 240,
-              blurRadius: 100,
+              blurRadius: 140,
             ),
           ),
           const Positioned(
@@ -113,7 +154,7 @@ class HomePage extends StatelessWidget {
             child: BlurCircle(
               color: cHomeBackgroundBlurCircle2,
               size: 160,
-              blurRadius: 80,
+              blurRadius: 100,
             ),
           ),
           child,
@@ -138,7 +179,40 @@ class HomePage extends StatelessWidget {
           blur: 8,
           distance: 8,
           intensity: 0.25,
-          child: Lottie.asset("assets/lottie/sun.json"),
+          duration: durationAnimationFade,
+          curve: curveAnimtionFade,
+          child: Stack(
+            children: WeatherState.values.map<Widget>((state) {
+              Widget child;
+
+              switch (state) {
+                case WeatherState.sun:
+                  child = lottieSun;
+                  break;
+                case WeatherState.rain:
+                  child = lottieRain;
+                  break;
+                case WeatherState.thunderstorm:
+                  child = lottieThunderstorm;
+                  break;
+                case WeatherState.fog:
+                  child = lottieFog;
+                  break;
+                case WeatherState.snow:
+                  child = lottieSnow;
+                  break;
+              }
+
+              return Center(
+                child: AnimatedOpacity(
+                  opacity: state == weatherState ? 1 : 0,
+                  duration: durationAnimationFade,
+                  curve: curveAnimtionFade,
+                  child: child,
+                ),
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -177,6 +251,8 @@ class HomePage extends StatelessWidget {
       blur: 8,
       distance: 8,
       intensity: 0.25,
+      duration: durationAnimationFade,
+      curve: curveAnimtionFade,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
