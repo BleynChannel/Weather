@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'ui/home_page.dart';
+import 'ui/pages/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,6 +17,8 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
       ),
       home: const HomePage(),
+
+      debugShowCheckedModeBanner: false,
     );
   }
 }
