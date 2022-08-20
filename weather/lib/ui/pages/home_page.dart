@@ -1,5 +1,7 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:weather/ui/pages/search_city_page.dart';
 
 import '../../src/utils.dart';
 import '../widgets/blur_circle.dart';
@@ -100,17 +102,33 @@ class _HomePageState extends State<HomePage> {
                 Expanded(child: Container()),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 6),
-                  child: GestureDetector(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: const [
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 1),
-                          child: Text("Стерлитамак"),
+                  child: OpenContainer(
+                    openColor: Colors.white,
+                    closedColor: Colors.transparent,
+                    closedElevation: 0,
+                    openBuilder: (context, action) => const SearchCityPage(),
+                    closedBuilder: (context, action) {
+                      return GestureDetector(
+                        onTap: action,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: const [
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 1),
+                              child: Text(
+                                "Стерлитамак",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            Icon(Icons.expand_more, color: Colors.white),
+                          ],
                         ),
-                        Icon(Icons.expand_more),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
                 Expanded(
@@ -338,8 +356,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           TextSpan(
             text: "OpenWeather",
-            style:
-                textStyle.merge(const TextStyle(fontWeight: FontWeight.bold)),
+            style: textStyle.copyWith(fontWeight: FontWeight.bold),
           ),
           TextSpan(
             text: "\n©2022 Golovin Vladislav | Все права защищены",

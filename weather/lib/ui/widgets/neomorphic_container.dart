@@ -4,6 +4,7 @@ class NeomorphicContainer extends StatelessWidget {
   final Widget? child;
   final Color? color;
   final Gradient? gradient;
+  final BoxBorder? border;
   final double borderRadius;
   final double distance;
   final double intensity;
@@ -16,6 +17,7 @@ class NeomorphicContainer extends StatelessWidget {
     this.child,
     this.color,
     this.gradient,
+    this.border,
     this.borderRadius = 0,
     this.distance = 4,
     this.intensity = 0.25,
@@ -29,6 +31,7 @@ class NeomorphicContainer extends StatelessWidget {
     return AnimatedContainer(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
+        border: border,
         color: color,
         gradient: gradient,
         boxShadow: <BoxShadow>[

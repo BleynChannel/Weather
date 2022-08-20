@@ -99,8 +99,7 @@ class AboutPage extends StatelessWidget {
         child: RichText(
           text: TextSpan(
             text: "Weather",
-            style:
-                textStyle.merge(const TextStyle(fontWeight: FontWeight.bold)),
+            style: textStyle.copyWith(fontWeight: FontWeight.bold),
             children: [
               TextSpan(
                 text:
@@ -130,8 +129,8 @@ class AboutPage extends StatelessWidget {
         children: [
           TextSpan(
             text: "\nГоловин Владислав",
-            style: textStyle.merge(
-                const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+            style:
+                textStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 20),
           )
         ],
       ),
