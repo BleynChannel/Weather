@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 enum WeatherState {
   sun,
   rain,
@@ -9,13 +7,31 @@ enum WeatherState {
 }
 
 class WeatherInfo {
-  String name;
-  Widget icon;
-  String data;
+  final int temperature;
+  final WeatherState state;
+  final double windSpeed;
+  final String windDirection;
+  final int humidity;
+  final int pressure;
 
   WeatherInfo({
-    required this.name,
-    required this.icon,
-    required this.data,
+    required this.temperature,
+    required this.state,
+    required this.windSpeed,
+    required this.windDirection,
+    required this.humidity,
+    required this.pressure,
   });
 }
+
+// class WeatherInfo {
+//   String name;
+//   Widget icon;
+//   String data;
+
+//   WeatherInfo({
+//     required this.name,
+//     required this.icon,
+//     required this.data,
+//   });
+// }

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../src/weather_parser.dart';
 import '../widgets/neomorphic_container.dart';
 
 class SearchCityPage extends StatefulWidget {
-  const SearchCityPage({Key? key}) : super(key: key);
+  final void Function(String) onChangeCity;
+
+  const SearchCityPage({Key? key, required this.onChangeCity})
+      : super(key: key);
 
   @override
   _SearchCityPageState createState() => _SearchCityPageState();
@@ -13,45 +17,25 @@ class _SearchCityPageState extends State<SearchCityPage> {
   static const commonTextStyle =
       TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
 
-  final List<String> cityList = [
-    "Москва",
-    "Санкт-Петербург",
-    "Уфа",
-    "Стерлитамак",
-    "Ишимбай",
-    "Салават",
-    "Мелеуз",
-    "Мелеуз",
-    "Мелеуз",
-    "Мелеуз",
-    "Мелеуз",
-    "Мелеуз",
-    "Мелеуз",
-    "Мелеуз",
-    "Мелеуз",
-    "Мелеуз",
-    "Мелеуз",
-    "Мелеуз",
-    "Мелеуз",
-    "Мелеуз",
-    "Мелеуз",
-    "Мелеуз",
-  ];
-
   List<String> fillterCityList = [];
 
   void searchCity(String value) {
     setState(() {
-      fillterCityList = cityList.where((element) => element.contains(value)).toList();
+      fillterCityList = WeatherParser.cityList.entries
+          .where((element) => element.key.contains(value))
+          .map((element) => element.key)
+          .toList();
     });
   }
 
   void choiseSearchCity(String city) {
+    widget.onChangeCity(city);
     Navigator.of(context).pop();
   }
 
   _SearchCityPageState() {
-    fillterCityList = cityList;
+    fillterCityList =
+        WeatherParser.cityList.entries.map((element) => element.key).toList();
   }
 
   @override

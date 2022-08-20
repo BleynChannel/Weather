@@ -1,13 +1,14 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:weather/ui/pages/search_city_page.dart';
 
+import '../../src/weather_parser.dart';
 import '../../src/utils.dart';
 import '../widgets/blur_circle.dart';
 import '../widgets/neomorphic_container.dart';
 import '../../constants.dart';
 import 'about_page.dart';
+import 'search_city_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,61 +18,91 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static final WeatherParser _weatherParser = WeatherParser();
   static const _durationAnimationFade = Duration(milliseconds: 500);
   static const _curveAnimtionFade = Curves.easeIn;
-  static final List<WeatherInfo> _weatherInfo = [
-    WeatherInfo(
-      name: "Ветер",
-      icon: const FaIcon(FontAwesomeIcons.wind, color: Colors.white, size: 22),
-      data: "1.3 м/с, СВ",
-    ),
-    WeatherInfo(
-      name: "Влажность",
-      icon:
-          const FaIcon(FontAwesomeIcons.droplet, color: Colors.white, size: 22),
-      data: "45%",
-    ),
-    WeatherInfo(
-      name: "Давление",
-      icon: const FaIcon(FontAwesomeIcons.gaugeHigh,
-          color: Colors.white, size: 22),
-      data: "567 мм рт. ст.",
-    ),
-  ];
+  static const Map<String, Widget> _weatherInfoItems = {
+    "Ветер": FaIcon(FontAwesomeIcons.wind, color: Colors.white, size: 22),
+    "Влажность":
+        FaIcon(FontAwesomeIcons.droplet, color: Colors.white, size: 22),
+    "Давление":
+        FaIcon(FontAwesomeIcons.gaugeHigh, color: Colors.white, size: 22),
+  };
 
+  Future<bool>? _changeWeatherFuture;
+
+  String _city = "Стерлитамак";
   WeatherState _weatherState = WeatherState.sun;
+
+  String _infoTemperature = "";
+  String _infoState = "";
+  String _infoWind = "";
+  String _infoHumidity = "";
+  String _infoPressure = "";
+
   Color _cBackgroundStart = cHomeBackgroundSunStart;
   Color _cBackgroundEnd = cHomeBackgroundSunEnd;
 
-  void changeWeatherState() {
-    _weatherState = WeatherState
-        .values[(_weatherState.index + 1) % WeatherState.values.length];
+  void _changeWeatherState(WeatherState state) {
+    _weatherState = state;
 
     switch (_weatherState) {
       case WeatherState.sun:
+        _infoState = "Ясно";
         _cBackgroundStart = cHomeBackgroundSunStart;
         _cBackgroundEnd = cHomeBackgroundSunEnd;
         break;
       case WeatherState.rain:
+        _infoState = "Дождь";
         _cBackgroundStart = cHomeBackgroundRainStart;
         _cBackgroundEnd = cHomeBackgroundRainEnd;
         break;
       case WeatherState.thunderstorm:
+        _infoState = "Гроза";
         _cBackgroundStart = cHomeBackgroundThunderstormStart;
         _cBackgroundEnd = cHomeBackgroundThunderstormEnd;
         break;
       case WeatherState.fog:
+        _infoState = "Туман";
         _cBackgroundStart = cHomeBackgroundFogStart;
         _cBackgroundEnd = cHomeBackgroundFogEnd;
         break;
       case WeatherState.snow:
+        _infoState = "Снег";
         _cBackgroundStart = cHomeBackgroundSnowStart;
         _cBackgroundEnd = cHomeBackgroundSnowEnd;
         break;
     }
   }
 
-  void onMenuSelected(String value) {
+  Future<bool> _changeWeather() async {
+    WeatherInfo? weatherInfo = await _weatherParser.parse(_city);
+
+    if (weatherInfo != null) {
+      _changeWeatherState(weatherInfo.state);
+      _infoTemperature = "${weatherInfo.temperature}°C";
+      _infoWind = "${weatherInfo.windSpeed} м/с, ${weatherInfo.windDirection}";
+      _infoHumidity = "${weatherInfo.humidity}%";
+      _infoPressure = "${weatherInfo.pressure} мм рт. ст.";
+    }
+
+    return true;
+  }
+
+  void _changeCity(String city) async {
+    _city = city;
+    await _changeWeather();
+
+    setState(() {});
+  }
+
+  String _getWeatherItemData(String parameter) => parameter == "Ветер"
+      ? _infoWind
+      : (parameter == "Влажность"
+          ? _infoHumidity
+          : (parameter == "Давление" ? _infoPressure : ""));
+
+  void _onMenuSelected(String value) {
     if (value == "О нас") {
       Navigator.push(
         context,
@@ -81,9 +112,16 @@ class _HomePageState extends State<HomePage> {
       );
     } else {
       setState(() {
-        changeWeatherState();
+        _changeWeatherState(WeatherState
+            .values[(_weatherState.index + 1) % WeatherState.values.length]);
       });
     }
+  }
+
+  @override
+  void initState() {
+    _changeWeatherFuture = _changeWeather();
+    super.initState();
   }
 
   @override
@@ -106,25 +144,26 @@ class _HomePageState extends State<HomePage> {
                     openColor: Colors.white,
                     closedColor: Colors.transparent,
                     closedElevation: 0,
-                    openBuilder: (context, action) => const SearchCityPage(),
+                    openBuilder: (context, action) =>
+                        SearchCityPage(onChangeCity: _changeCity),
                     closedBuilder: (context, action) {
                       return GestureDetector(
                         onTap: action,
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
-                          children: const [
+                          children: [
                             Padding(
-                              padding: EdgeInsets.only(bottom: 1),
+                              padding: const EdgeInsets.only(bottom: 1),
                               child: Text(
-                                "Стерлитамак",
-                                style: TextStyle(
+                                _city,
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
-                            Icon(Icons.expand_more, color: Colors.white),
+                            const Icon(Icons.expand_more, color: Colors.white),
                           ],
                         ),
                       );
@@ -145,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                                       child: Text(item),
                                     ))
                             .toList(),
-                        onSelected: onMenuSelected,
+                        onSelected: _onMenuSelected,
                       ),
                     ],
                   ),
@@ -153,30 +192,39 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          body: Center(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                  left: 40, right: 40, top: 40, bottom: 4),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    children: [
-                      _buildWeatherIconUI(context),
-                      const SizedBox(height: 20),
-                      _buildTemperatureInfoUI(context),
-                    ],
+          body: FutureBuilder(
+            future: _changeWeatherFuture,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 40, right: 40, top: 40, bottom: 4),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            _buildWeatherIconUI(context),
+                            const SizedBox(height: 20),
+                            _buildTemperatureInfoUI(context),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            _buildWeatherInfoUI(context),
+                            const SizedBox(height: 30),
+                            _buildFooterUI(context),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  Column(
-                    children: [
-                      _buildWeatherInfoUI(context),
-                      const SizedBox(height: 30),
-                      _buildFooterUI(context),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+                );
+              }
+
+              return Container();
+            },
           ),
         ),
       ),
@@ -278,16 +326,16 @@ class _HomePageState extends State<HomePage> {
   Widget _buildTemperatureInfoUI(BuildContext context) {
     return Column(
       children: [
-        const Text(
-          "24°C",
-          style: TextStyle(
+        Text(
+          _infoTemperature,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
             fontSize: 40,
           ),
         ),
         Text(
-          "Ясно",
+          _infoState,
           style: TextStyle(
             color: Colors.white.withOpacity(0.75),
             fontSize: 26,
@@ -313,16 +361,17 @@ class _HomePageState extends State<HomePage> {
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          children: _weatherInfo.map((item) {
+            children: _weatherInfoItems.entries.map<Widget>(
+          (item) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    item.icon,
+                    item.value,
                     const SizedBox(width: 4),
                     Text(
-                      item.data,
+                      _getWeatherItemData(item.key),
                       style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -331,14 +380,14 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 Text(
-                  item.name,
+                  item.key,
                   style: TextStyle(
                       color: Colors.white.withOpacity(0.8), fontSize: 18),
                 )
               ],
             );
-          }).toList(),
-        ),
+          },
+        ).toList()),
       ),
     );
   }

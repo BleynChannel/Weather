@@ -27,7 +27,6 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  animated_text_kit: ^4.2.2
   animations: ^2.0.3
   cupertino_icons: ^1.0.2
   flutter:
@@ -35,6 +34,7 @@ dependencies:
   flutter_svg: ^1.1.4
   font_awesome_flutter: ^10.1.0
   lottie: ^1.4.1
+  requests: ^4.4.1
 
 dev_dependencies:
   flutter_lints: ^2.0.0
